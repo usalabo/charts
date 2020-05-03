@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  iine-grp:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2020-05-03T17:46:00.08638+09:00"
+    description: A Helm chart for Kubernetes
+    digest: 091d126ac8b54b2db67ac7d89bd55b418fff7eb4c8ecd7ecbb86e4888b5fee9e
+    name: iine-grp
+    urls:
+    - iine-grp-0.0.1.tgz
+    version: 0.0.1
+generated: "2020-05-03T17:46:00.085797+09:00"
