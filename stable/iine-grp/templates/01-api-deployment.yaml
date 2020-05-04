@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "iine-grp.api.fullname" . }}
+  labels:
+{{ include "iine-grp.api.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "iine-grp.api.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "iine-grp.api.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.api.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          env:
+            - name: APP_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+            - name: AUTH_PRIVATE_KEY
+              value: {{ .Values.api.auth.privateKey }}
+            - name: AUTH_DOMAIN
+              value: {{ .Values.api.auth.domain }}
+            - name: AUTH_CLIENT_ID
+              value: {{ .Values.api.auth.clientId }}
+            - name: AUTH_CLIENT_SECRET
+              value: {{ .Values.api.auth.clientSecret }}
+            - name: AUTH_REDIRECT_URL
+              value: {{ .Values.api.auth.redirectUrl }}
+            - name: AUTH_LOGOUT_REDIRECT_URL
+              value: {{ .Values.api.auth.logoutRedirectUrl }}
+            - name: DEFAULT_ADMIN_USER_USERNAME
+              value: {{ .Values.api.defaultAdminUser.username }}
+            - name: DEFAULT_ADMIN_USER_PASSWORD
+              value: {{ .Values.api.defaultAdminUser.password }}
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: MONGO_HOSTLIST
+              value: database-0.database:27017
+            - name: MONGO_DATABASE
+              value: iine
+            - name: MONGO_REPLICA_SET
+              value: rs0
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+      {{- with .Values.api.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.api.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.api.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

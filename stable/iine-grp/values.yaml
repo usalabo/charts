@@ -1,50 +1,105 @@
-# Default values for iine-grp.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+web:
+  replicaCount: 1
 
-replicaCount: 1
+  image:
+    repository: usalabo/iine-grp-web
+    tag: 0.0.0
+    pullPolicy: IfNotPresent
 
-image:
-  repository: nginx
-  tag: stable
-  pullPolicy: IfNotPresent
+  imagePullSecrets: []
 
-imagePullSecrets: []
+  service:
+    type: ClusterIP
+    port: 80
+
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "0"
+    limits:
+      memory: "64Mi"
+      cpu: "10m"
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+api:
+  replicaCount: 1
+
+  image:
+    repository: usalabo/iine-grp-api
+    tag: 1.0.0
+    pullPolicy: IfNotPresent
+
+  imagePullSecrets: []
+
+  auth:
+    privateKey: "_secret"
+    domain: "_domain"
+    clientId: "_clientId"
+    clientSecret: "_clientSecret"
+    redirectUrl: "_redirectUrl"
+    logoutRedirectUrl: "_logoutRedirectUrl"
+  defaultAdminUser:
+    username: "root"
+    password: "B6uaDXVd"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "0"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
 nameOverride: ""
 fullnameOverride: ""
 
-service:
-  type: ClusterIP
-  port: 80
-
 ingress:
-  enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+    kubernetes.io/ingress.class: "nginx"
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
-      paths: []
 
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+mongo-cluster:
+  db:
+    username: "default"
+    password: "default-secret-pass"
+    secretkey: |-
+      ZzMj09S/XxxPNdGQzvpWOVekNE5vAydrbu7/iVAPr9vo0OgbNaNFJ63yyHGqsXDI
+      mB/JeKF17LMMLVGmCh4SgYJ850fBS0Iwmo+pfrwMb8pvhqrDwzh1aRReHhmRfMOZ
+      bZb6SQxMafa7RgpO2F4u5b2lnlH4ZpH3kT+xtKmIDjVfuFy8a1EIyrKEL8QjUoHv
+      fEDBgpRfBLVwvIplWJpx1lXgm7MFeJaamD1WecR/UBLOKVSZpO1Fwz8cL6aXY5mB
+      2/LE0y/KxrmpvJLEKthu/Eu/rUmZdkv4cbb1XEGchKDvQqQtD/5Du450I2OqcMYv
+      QEaVGZWG5uGuKpibxJMLB65V8UsNx0tmWb/RYCpdUbp9ErXxwySXZ9hpS76pytBz
+      cCh/Rr5ovDCj4PfjUoRPxww78e0wlHf6Mee/Yris2cNp3cdw75pVJV1gZTzRMA0Q
+      Mbd0dZhkPtrifvaZg17K7tcU0sL0vbOeY2M+VvgJHVVR/kDdrCoevpckQmtMwB0y
+      XUQB0oLqZEqgdCPKPWBdyWX9/XEqNJVqwi9rDlNF3QEqPYrAERfFtSyoCkYpSsuY
+      ZYSNYkTepsKXPLRXqwSdxeNqbVUcPc3P94bheH303bjyJpbTYrxT67IJ+DrCPKfU
+      z6Q3m2HYM8Fjf7hg3TXzZ/Wdp40eI11yzvOxSndk4K9flv7CYU2yNTaZi4zIdETH
+      tiHG4d19wLw1sdiKuZ1d18goe2qJm6qdVO3eHnQzXV9DgZ+Sy35zmVtbxkXw1ulE
+      ua59rjHaC4YNPmNFgdB7XS3pT7S7Y0P6WYRxPRkvTHF7WeHMmrQAT0J5A0EM1wK3
+      jo4jQWfn5x3Pk+1cV/tL1hgUyy2UkLFjkNojpqulpXeB/SpKZjnaKALKMk/GOYsC
+      CVsoNrWEcvRh0K5KuXiGhl0IpC8KlpiUNfA0fuOZY9vlubHYJPKTOfHSnjFM6hDD
+      kuA3sySofUMtRKBB7Mac39Ouo3p3EDaXAPHEZdRcCmKATxKJ

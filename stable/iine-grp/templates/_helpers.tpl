@@ -5,6 +5,12 @@ Expand the name of the chart.
 {{- define "iine-grp.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+{{- define "iine-grp.web.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}-web
+{{- end -}}
+{{- define "iine-grp.api.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}-api
+{{- end -}}
 
 {{/*
 Create a default fully qualified app name.
@@ -24,6 +30,32 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
+{{- define "iine-grp.web.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}-web
+{{- end -}}
+
+{{- define "iine-grp.api.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}-api
+{{- end -}}
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}
@@ -36,6 +68,26 @@ Common labels
 */}}
 {{- define "iine-grp.labels" -}}
 app.kubernetes.io/name: {{ include "iine-grp.name" . }}
+helm.sh/chart: {{ include "iine-grp.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{- define "iine-grp.web.labels" -}}
+app.kubernetes.io/name: {{ include "iine-grp.web.name" . }}
+helm.sh/chart: {{ include "iine-grp.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{- define "iine-grp.api.labels" -}}
+app.kubernetes.io/name: {{ include "iine-grp.api.name" . }}
 helm.sh/chart: {{ include "iine-grp.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}

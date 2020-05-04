@@ -1,0 +1,6 @@
+dependencies:
+- name: mongo-cluster
+  repository: https://usalabo.github.io/charts/stable
+  version: 0.0.1
+digest: sha256:cae81a8d570eec44a074f6cf5fca4c01b88265a8f82bad5dff1e322e72df305d
+generated: "2020-05-04T16:02:06.402859+09:00"

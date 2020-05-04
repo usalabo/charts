@@ -1,0 +1,4 @@
+dependencies:
+- name: mongo-cluster
+  version: "0.0.1"
+  repository: "https://usalabo.github.io/charts/stable"
