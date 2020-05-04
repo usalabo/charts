@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+data:
+  secretkey: |- {{ .Values.db.secretkey | nindent 4 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  labels:
+    name: database
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector:
+    app: database
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+spec:
+  selector:
+    matchLabels:
+      app: database
+  serviceName: database
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      terminationGracePeriodSeconds: 10
+      initContainers:
+      - name: create-secretkey
+        image: alpine
+        command: ["sh", "-c"]
+        args:
+        - |
+          cp /conf-src/secretkey /conf-dist/secretkey
+          chown 999:999 /conf-dist/secretkey
+          chmod 600 /conf-dist/secretkey
+        volumeMounts:
+        - name: db-config-volume
+          mountPath: /conf-src
+        - name: secretkey-volume
+          mountPath: /conf-dist
+      containers:
+      - name: mongo
+        image: mongo
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 256Mi
+            cpu: 500m
+        command:
+        - docker-entrypoint.sh
+        - mongod
+        - "--bind_ip"
+        - 0.0.0.0
+        - "--replSet"
+        - rs0
+        - "--keyFile"
+        - "/home/mongod/secretkey"
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: database-pvc
+          mountPath: /data/db
+        - name: secretkey-volume
+          mountPath: /home/mongod
+      - name: mongo-sidecar
+        image: cvallance/mongo-k8s-sidecar
+        env:
+        - name: KUBE_NAMESPACE
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: namespace
+        - name: MONGO_SIDECAR_POD_LABELS
+          value: "app=database"
+        - name: KUBERNETES_MONGO_SERVICE_NAME
+          value: database
+        - name: MONGODB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: username
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: MONGODB_DATABASE
+          value: admin
+      volumes:
+      - name: db-config-volume
+        configMap:
+          name: db-config
+      - name: secretkey-volume
+        emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: database-pvc
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 100Mi
