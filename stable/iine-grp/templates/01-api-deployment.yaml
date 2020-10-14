@@ -40,7 +40,7 @@ spec:
             - name: AUTH_LOGOUT_URL
               value: {{ .Values.api.auth.logoutUrl }}
             - name: AUTH_LOGOUT_REDIRECT_URL
-              value: {{ .Values.api.auth.logoutRedirectUrl }}/login
+              value: {{ .Values.api.auth.externalUrl }}/login
             - name: DEFAULT_ADMIN_USER_USERNAME
               value: {{ .Values.api.defaultAdminUser.username }}
             - name: DEFAULT_ADMIN_USER_PASSWORD
