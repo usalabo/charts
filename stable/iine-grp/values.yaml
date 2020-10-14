@@ -3,7 +3,7 @@ web:
 
   image:
     repository: usalabo/iine-grp-web
-    tag: 0.0.1
+    tag: 1.0.4
     pullPolicy: IfNotPresent
 
   imagePullSecrets: []
@@ -31,18 +31,18 @@ api:
 
   image:
     repository: usalabo/iine-grp-api
-    tag: 1.0.2
+    tag: 1.0.4
     pullPolicy: IfNotPresent
 
   imagePullSecrets: []
 
   auth:
     privateKey: "_secret"
-    domain: "_domain"
+    issuer: "_issuer"
     clientId: "_clientId"
     clientSecret: "_clientSecret"
-    redirectUrl: "_redirectUrl"
-    logoutRedirectUrl: "_logoutRedirectUrl"
+    externalUrl: "http://localhost:4200"
+    logoutUrl: "%issuer%v2/logout?returnTo=%logoutRedirectUrl%&client_id=%clientId%"
   defaultAdminUser:
     username: "root"
     password: "B6uaDXVd"

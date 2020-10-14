@@ -29,16 +29,18 @@ spec:
               value: {{ .Chart.AppVersion | quote }}
             - name: AUTH_PRIVATE_KEY
               value: {{ .Values.api.auth.privateKey }}
-            - name: AUTH_DOMAIN
-              value: {{ .Values.api.auth.domain }}
+            - name: AUTH_ISSUER
+              value: {{ .Values.api.auth.issuer }}
             - name: AUTH_CLIENT_ID
               value: {{ .Values.api.auth.clientId }}
             - name: AUTH_CLIENT_SECRET
               value: {{ .Values.api.auth.clientSecret }}
             - name: AUTH_REDIRECT_URL
-              value: {{ .Values.api.auth.redirectUrl }}
+              value: {{ .Values.api.auth.externalUrl }}/callback
+            - name: AUTH_LOGOUT_URL
+              value: {{ .Values.api.auth.logoutUrl }}
             - name: AUTH_LOGOUT_REDIRECT_URL
-              value: {{ .Values.api.auth.logoutRedirectUrl }}
+              value: {{ .Values.api.auth.logoutRedirectUrl }}/login
             - name: DEFAULT_ADMIN_USER_USERNAME
               value: {{ .Values.api.defaultAdminUser.username }}
             - name: DEFAULT_ADMIN_USER_PASSWORD
