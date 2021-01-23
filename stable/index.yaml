@@ -3,7 +3,20 @@ entries:
   iine-grp:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2020-10-14T15:33:33.876419+09:00"
+    created: "2021-01-23T16:08:47.949299+09:00"
+    dependencies:
+    - name: mongo-cluster
+      repository: https://usalabo.github.io/charts/stable
+      version: 0.0.1
+    description: A Helm chart for Kubernetes
+    digest: 875f60c6e85ec8c58619a78303846f600faf55ad8dba9a1fe4592a2b47f4a319
+    name: iine-grp
+    urls:
+    - iine-grp-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2021-01-23T16:08:47.947163+09:00"
     dependencies:
     - name: mongo-cluster
       repository: https://usalabo.github.io/charts/stable
@@ -63,4 +76,4 @@ entries:
     urls:
     - mongo-cluster-0.0.1.tgz
     version: 0.0.1
-generated: "2020-10-14T15:33:33.864901+09:00"
+generated: "2021-01-23T16:08:47.860897+09:00"
